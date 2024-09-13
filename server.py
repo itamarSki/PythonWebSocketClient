@@ -1,13 +1,16 @@
 import asyncio
 import websockets
-# create handler for each connection
+
+# Create handler for each connection
 async def handler(websocket, path):
+    client_ip, client_port = websocket.remote_address
     data = await websocket.recv()
     print(data)
-    reply = f"Data Backup recieved as:  {data}!"
+    reply = f"Connection from address => {client_ip}:{client_port}"
     await websocket.send(reply)
 
-print("server starting...")
+print("Server starting...")
+# Start the server
 start_server = websockets.serve(handler, "0.0.0.0", 8000)
 print("Server Started")
 
