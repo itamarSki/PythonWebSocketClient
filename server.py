@@ -5,8 +5,8 @@ import websockets
 async def handler(websocket, path):
     client_ip, client_port = websocket.remote_address
     data = await websocket.recv()
-    print(data)
     reply = f"Connection from address => {client_ip}:{client_port}"
+    print(reply)
     await websocket.send(reply)
 
 print("Server starting...")

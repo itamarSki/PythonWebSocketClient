@@ -1,16 +1,26 @@
-vimport asyncio
+import asyncio
 import websockets
 import os
+import socket
 
 # Function to initiate WebSocket connection
 async def connect_to_websocket(uri, local_ip=None):
     try:
-        async with websockets.connect(uri) as websocket:
+        # Create a new socket to bind to the local IP
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind((local_ip, 0))  # Bind to the given local IP
+        sock.listen(1)
+        print(f"Bound to {local_ip}")
+
+        # Pass the socket to the WebSocket client
+        async with websockets.connect(uri, local_addr=(local_ip, 0)) as websocket:
             await websocket.send(f"Hello from {local_ip}")
             response = await websocket.recv()
             print(f"Response from server: {response}")
     except Exception as e:
         print(f"Connection from {local_ip} failed: {e}")
+    finally:
+        sock.close()
 
 # Function to remove floating IP from the interface
 def remove_floating_ip(floating_ip, interface):
